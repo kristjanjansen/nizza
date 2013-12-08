@@ -127,7 +127,7 @@ class ConvertBlog extends ConvertBase {
 
    foreach($comments_old as $comment_old) {
      $blog = new Blog;
-     $blog->id = $comment_old->cid;
+  //   $blog->id = $comment_old->cid;
      $blog->user_id = $comment_old->uid;
      $blog->title = $comment_old->subject;
      $blog->body = '(from list) ' . $comment_old->comment;
