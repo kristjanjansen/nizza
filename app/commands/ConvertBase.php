@@ -79,8 +79,10 @@ class ConvertBase extends Command {
      if (!User::find($user_old->uid)) {
 
        // @TODO fix this mess
-       
+/*       
        if ($user_old->picture && file_exists($this->user_image_src . basename($user_old->picture))) {
+*/           
+        if ($user_old->picture) {
 
          $image_path = basename($user_old->picture);
          
