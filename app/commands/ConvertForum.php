@@ -318,7 +318,6 @@ class ConvertForum extends ConvertBase {
  		  if (array_key_exists('new', $topic)) {
  		    $forum = Forum::find($forum_id);
          if (preg_match($topic['pattern'], $forum->title)) {
-           print_r($forum->title);
 
            DB::table('topic_map')->insert(
              array(
