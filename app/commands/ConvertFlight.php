@@ -51,12 +51,9 @@ class ConvertFlight extends ConvertBase {
 
      $flight = new Flight;
      $flight->id = $flight_old->nid;
-     $flight->type = get_class($flight);
      $flight->user_id = $flight_old->uid;
      $flight->title = $flight_old->title;
-     
      $flight->body = $flight_old->body;
-
      $flight->body .= $flight_old->field_tripeecomment_value ? "\n\n" . $flight_old->field_tripeecomment_value : '' ; 
        
      /*
@@ -71,21 +68,18 @@ class ConvertFlight extends ConvertBase {
      delta
     
      */
+
+ $flight->url = $flight_old->field_linktooffer_url ? $flight_old->field_linktooffer_url : '';
+ 
+     $flight->carrier_id = $flight_old->tid;
      
      $flight->created_at = Carbon::createFromTimeStamp($flight_old->created);  
      $flight->updated_at = Carbon::createFromTimeStamp($flight_old->last_comment);  
-
      $flight->save();
-     
-     $fields = new FlightField;
-     $fields->content_id = $flight_old->nid;
-     $fields->url = $flight_old->field_linktooffer_url ? $flight_old->field_linktooffer_url : '';
-     $fields->carrier_id = $flight_old->tid;
-     $fields->save();
-     
+          
      $this->createUser($flight_old->uid);
      $this->createComments($flight_old->nid, 'Flight');
-     $this->attachDestinations($flight_old->nid);                     
+     $this->attachDestinations($flight_old->nid, 'Flight');                     
              
    }
    
@@ -108,7 +102,6 @@ class ConvertFlight extends ConvertBase {
 
      $flight = new Flight;
      $flight->id = $flight_old->nid;
-     $flight->type = get_class($flight);
      $flight->user_id = $flight_old->uid;
      $flight->title = '(from forum) ' . $flight_old->title;
      $flight->body = $flight_old->body;
@@ -118,8 +111,8 @@ class ConvertFlight extends ConvertBase {
      $flight->save();
 
      $this->createUser($flight_old->uid);
-     $this->createComments($flight_old->nid);
-     $this->attachDestinations($flight_old->nid);                     
+     $this->createComments($flight_old->nid, 'Flight');
+     $this->attachDestinations($flight_old->nid, 'Flight');                     
 
    }
    

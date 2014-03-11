@@ -3,7 +3,7 @@
 return array(
 
   'batch' => 25,
-  'max_count' => 1,
+  'max_count' => 4,
 
   'user_image_src' => '/Users/kristjanjansen/Sites/files/imagecache/trip_picture_small/pictures/',
   'user_image_src' => 'http://trip.ee/files/imagecache/trip_picture_small/pictures/',

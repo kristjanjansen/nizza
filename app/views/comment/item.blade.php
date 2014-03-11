@@ -4,8 +4,8 @@
   <td>
 {{ HTML::linkAction('UserController@show', $comment->user->name, array($comment->user->id)) }} at {{ $comment->created_at}} 
 <br />
-@include('flag.item')->with('flags', $comment->flags) 
+{{ nl2br($comment->body) }}
 <br />
-{{ $comment->body }}
+@include('flag.item')->with('flags', $comment->flags)
 </td>
 

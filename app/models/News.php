@@ -1,10 +1,20 @@
 <?php
 
-class News extends Content {
+class News extends Eloquent {
 
-  public function field() {
-      return $this->hasOne('NewsField', 'content_id');
-  }
+    protected $table = 'news';
+
+    public function user() {
+        return $this->belongsTo('User');
+    }
+
+    public function comments() {
+        return $this->morphMany('Comment', 'commentable');
+    }
+    
+    public function destinations()
+    {
+        return $this->morphToMany('Destination', 'destinationable');
+    }
   
-
 }

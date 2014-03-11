@@ -6,26 +6,25 @@ class BlogController extends BaseController {
 
   public function index() {
 
+    $current_page = Paginator::getCurrentPage();
+
     $this->layout->title = 'Blog';   	  
-  	$this->layout->content = $this->renderBlogIndex();
-  
+  	$this->layout->content = Cache::
+        remember(
+            'blog-index-' . $current_page , 
+            1, 
+            function() {
+                return $this->renderBlogIndex();
+            }); 
    }
    
    public function renderBlogIndex() {
     
-    $current_page = Paginator::getCurrentPage();
-    
-    return Cache::
-     remember(
-       'blog-index-' . $current_page , 
-       1, 
-       function() 
-     {
        
     $items = array();
     
     $blogs = Blog::orderBy('created_at', 'desc')
-      ->with('user', 'destinations', 'field')
+      ->with('user', 'destinations')
       ->paginate(30);
 
     foreach($blogs as $blog) {
@@ -41,17 +40,33 @@ class BlogController extends BaseController {
           ->links()
         )
       ->render();
-    
-    });
-  
+      
   }
   
-  public function show($id) {
+  
+    public function show($id) {
+      
+        $content = '';
+        $items = array();
 
-  	$content = $this->renderContentShow($id, 'Blog', 'content.show', 'comment.item_small'); 	
-    $this->layout->title = $content->title;   	  
-  	$this->layout->content = $content->content; 
+  	    $item = Blog::findOrFail($id);
+        $item->load('user','comments','comments.user', 'destinations');
+        
+        $content = View::make('blog.show')
+            ->with('item', $item);
 
+        foreach($item->comments as $comment) {
+            $items[] = View::make('comment.item')
+                ->with('comment', $comment);
+     	}
+
+     	$content .= View::make('layout.table')
+            ->with('items', $items)
+            ->render();
+
+        $this->layout->title = $item->title;   	  
+       	$this->layout->content = $content;
+        
    }
 
  }

@@ -51,7 +51,6 @@ class ConvertTravelmate extends ConvertBase {
 
       $travelmate = new Travelmate;
       $travelmate->id = $mate_old->nid;
-      $travelmate->type = get_class($travelmate);     
       $travelmate->user_id = $mate_old->uid;
       $travelmate->title = $mate_old->title;
       $travelmate->body = $mate_old->body;
@@ -81,7 +80,7 @@ class ConvertTravelmate extends ConvertBase {
       $travelmate->save();  
       $this->createUser($mate_old->uid);
       $this->createComments($mate_old->nid, 'Travelmate');
-      $this->attachDestinations($mate_old->nid);                     
+      $this->attachDestinations($mate_old->nid, 'Travelmate');                     
     
      }
 

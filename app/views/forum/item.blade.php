@@ -10,13 +10,14 @@
 @endif
 
 @foreach($item->destinations as $destination)
-{{ $destination->title }}, 
+{{ $destination->title }} ({{ $destination->id }}), 
 @endforeach
-
+<br />
 @foreach($item->topics as $topic)
-{{ $topic->title }}, 
+{{ $topic->title }} ({{ $topic->id }}), 
 @endforeach
-
+<br />
+@include('flag.item')->with('flags', $item->flags)
 
 </td>
 

@@ -14,8 +14,11 @@ class CreateImageTable extends Migration {
     {
         Schema::create('image', function(Blueprint $table) {
             $table->increments('id');	
-            $table->integer('content_id')->index();	
-            $table->string('filename');      			
+            $table->integer('user_id')->index();	
+            $table->string('title');
+            $table->text('body');
+            $table->string('filename');
+            $table->timestamps(); 			
         });
     }
 

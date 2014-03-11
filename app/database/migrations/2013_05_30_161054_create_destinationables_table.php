@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateDestinationMapTable extends Migration {
+class CreateDestinationablesTable extends Migration {
 
     /**
      * Run the migrations.
@@ -12,10 +12,10 @@ class CreateDestinationMapTable extends Migration {
      */
     public function up()
     {
-        Schema::create('destination_map', function(Blueprint $table) {
-          $table->increments('id');	
-          $table->integer('content_id')->index();	
+        Schema::create('destinationables', function(Blueprint $table) {
           $table->integer('destination_id')->index();	
+          $table->integer('destinationable_id')->index();	
+          $table->string('destinationable_type');
         });
     }
 
@@ -26,7 +26,7 @@ class CreateDestinationMapTable extends Migration {
      */
     public function down()
     {
-        Schema::drop('destination_map');
+        Schema::drop('destinationable');
     }
 
 }

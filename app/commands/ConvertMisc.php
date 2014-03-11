@@ -47,11 +47,11 @@ class ConvertMisc extends ConvertBase {
 
     foreach($miscs_old as $misc_old) {
 
-      if (!Misc::find($misc_old->nid)) {
+      if (!Forum::find($misc_old->nid)) {
 
-      $misc = new Misc;
+      $misc = new Forum;
       $misc->id = $misc_old->nid;
-      $misc->type = get_class($misc);
+      $misc->forum_type = 'Misc';
       $misc->user_id = $misc_old->uid;
       $misc->title = $misc_old->title;
       $misc->body = $misc_old->body;
@@ -62,10 +62,10 @@ class ConvertMisc extends ConvertBase {
 
       $misc->save();  
       $this->createUser($misc_old->uid);
-      $this->createComments($misc_old->nid, 'Misc');
-      $this->attachDestinations($misc_old->nid);                     
+      $this->createComments($misc_old->nid, 'Forum');
+      $this->attachDestinations($misc_old->nid, 'Forum');                     
     
-      $this->attachFlags($misc_old->nid, 'Misc');
+  //    $this->attachFlags($misc_old->nid, 'Misc');
     
      }
 

@@ -9,4 +9,9 @@ class Flag extends Eloquent {
       return $this->belongsTo('User');
   }  
 
+  public function flaggable()
+  {
+      return $this->morphTo();
+  }
+
 }

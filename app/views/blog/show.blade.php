@@ -4,3 +4,7 @@
 
 <br />
 {{ nl2br($item->body) }}
+<br />
+@foreach($item->destinations as $destination)
+{{ $destination->title }}, 
+@endforeach

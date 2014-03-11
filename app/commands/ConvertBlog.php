@@ -15,7 +15,6 @@ class ConvertBlog extends ConvertBase {
 	public function fire() {
     
     $this->createDestinations();
-    $this->createTopics();
 		
     for ($count = 0; $count < $this->max_count; $count ++) {
       
@@ -31,10 +30,10 @@ class ConvertBlog extends ConvertBase {
 	}
 	
   public function convert($job, $data) {
-    
-    
-   
+      
     // From blogs
+    
+    $pattern = "/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/";
     
     $blogs_old = DB::connection('trip')
       ->table('node')
@@ -53,32 +52,27 @@ class ConvertBlog extends ConvertBase {
 
       $blog = new Blog;
       $blog->id = $blog_old->nid;
-      $blog->type = get_class($blog);
       $blog->user_id = $blog_old->uid;
       $blog->title = $blog_old->title;
       $blog->body = $blog_old->body;
+
+      if (preg_match_all($pattern, $blog->body, $matches)) {
+        $blog->url = $matches[0][0];
+      }
+      
       $blog->created_at = Carbon::createFromTimeStamp($blog_old->created);  
       $blog->updated_at = Carbon::createFromTimeStamp($blog_old->last_comment);  
       
       $blog->save();
-
-      $pattern = "/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/";
-      if (preg_match_all($pattern, $blog->body, $matches)) {
-        $fields = new BlogField;
-        $fields->content_id = $blog_old->nid;
-        $fields->url = $matches[0][0];
-        $fields->save();  
-      }
-      
-      
+     
       $this->createUser($blog_old->uid);
       $this->createComments($blog_old->nid, 'Blog');
-      $this->attachDestinations($blog_old->nid);                     
+      $this->attachDestinations($blog_old->nid, 'Blog');                     
       
       }
     }
     
-    // From forum
+    // From Forum
     
 		$blogs_old = DB::connection('trip')
      ->table('node')
@@ -100,16 +94,13 @@ class ConvertBlog extends ConvertBase {
      $blog->user_id = $blog_old->uid;
      $blog->title = $blog_old->title;
      $blog->body = '(from forum) ' . $blog_old->body;
+     
+     if (preg_match_all($pattern, $blog->body, $matches)) {
+       $blog->url = $matches[0][0];
+     }
+     
      $blog->created_at = Carbon::createFromTimeStamp($blog_old->created);  
      $blog->updated_at = Carbon::createFromTimeStamp($blog_old->last_comment);  
-     
-     $pattern = "/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/";
-     if (preg_match_all($pattern, $blog->body, $matches)) {
-       $fields = new BlogField;
-       $fields->content_id = $blog_old->nid;
-       $fields->url = $matches[0][0];
-       $fields->save();
-     }
      
      $blog->save();
 
@@ -119,7 +110,8 @@ class ConvertBlog extends ConvertBase {
 
    }
     
-  
+   // From node
+   
    $comments_old = DB::connection('trip')
      ->table('comments')
      ->where('nid', '=', 38033)
@@ -127,20 +119,15 @@ class ConvertBlog extends ConvertBase {
 
    foreach($comments_old as $comment_old) {
      $blog = new Blog;
-  //   $blog->id = $comment_old->cid;
+ //    $blog->id = $comment_old->cid + 1000000000000;
      $blog->user_id = $comment_old->uid;
      $blog->title = $comment_old->subject;
-     $blog->body = '(from list) ' . $comment_old->comment;
+     $blog->body = '(from node) ' . $comment_old->comment;
      $blog->created_at = Carbon::createFromTimeStamp($comment_old->timestamp);  
      $blog->updated_at = Carbon::createFromTimeStamp($comment_old->timestamp);  
 
-
-     $pattern = "/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/";
      if (preg_match_all($pattern, $blog->body, $matches)) {
-       $fields = new BlogField;
-       $fields->content_id = $comment_old->nid;
-       $fields->url = $matches[0][0];
-       $fields->save();
+       $blog->url = $matches[0][0];
      }
      
      $blog->save();

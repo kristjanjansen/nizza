@@ -15,15 +15,13 @@ Route::get('/', 'FrontController@index');
 
 Route::resource('user', 'UserController');
 Route::resource('forum', 'ForumController');
-Route::resource('travelmate', 'TravelmateController');
-Route::resource('topic', 'TopicController');
 Route::resource('blog', 'BlogController');
 Route::resource('image', 'ImageController');
 Route::resource('news', 'NewsController');
 Route::resource('flight', 'FlightController');
 Route::resource('offer', 'OfferController');
-Route::resource('destination', 'DestinationController');
 Route::resource('expat', 'ExpatController');
-Route::resource('buysell', 'BuysellController');
-Route::resource('misc', 'MiscController');
 Route::resource('editor', 'EditorController');
+
+// Route::resource('topic', 'TopicController');
+// Route::resource('destination', 'DestinationController');

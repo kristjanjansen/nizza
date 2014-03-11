@@ -6,33 +6,32 @@ class NewsController extends BaseController {
 
   public function index() {
 
+    $current_page = Paginator::getCurrentPage();
+
     $this->layout->title = 'News';   	  
-  	$this->layout->content = $this->renderNewsIndex();
-  
+  	$this->layout->content = Cache::
+        remember(
+            'news-index-' . $current_page , 
+            1, 
+            function() {
+                return $this->renderIndex();
+            }); 
    }
    
-   public function renderNewsIndex() {
-    
-     $current_page = Paginator::getCurrentPage();
-    
-     return Cache::
-      remember(
-        'news-index-' . $current_page , 
-        1, 
-        function() 
-      {
-        
-    $news = News::with('field')->orderBy('created_at', 'desc')
-      ->paginate(30);
- 	  
+   public function renderIndex() {
+          
     $items = array();
     
+    $news = News::orderBy('created_at', 'desc')
+      ->with('user', 'destinations')
+      ->paginate(30);
+
     foreach($news as $new) {
-      $items[] = View::make('news.item_' . (($new->field->url) ? 'short' : 'long'))
+      $items[] = View::make('news.item_' . (($new->url) ? 'short' : 'long'))
         ->with('item', $new);
-    }
-    
-    return View::make('layout.list')
+ 	  }
+ 	  
+ 	  return View::make('layout.list')
       ->with('items', $items)
       ->with('pager', 
         Paginator::
@@ -40,18 +39,33 @@ class NewsController extends BaseController {
           ->links()
         )
       ->render();
-
-    });
-    
+          
   }
 
 
-     public function show($id) {
+   public function show($id) {
+     
+       $content = '';
+       $items = array();
 
-     	$content = $this->renderContentShow($id, 'News', 'news.show', 'comment.item_small'); 	
-      $this->layout->title = $content->title;   	  
-     	$this->layout->content = $content->content; 
+ 	   $item = News::findOrFail($id);
+       $item->load('user','comments','comments.user', 'destinations');
+       
+       $content = View::make('news.show')
+           ->with('item', $item);
 
-      }
+       foreach($item->comments as $comment) {
+           $items[] = View::make('comment.item')
+               ->with('comment', $comment);
+    	}
+
+    	$content .= View::make('layout.table')
+           ->with('items', $items)
+           ->render();
+
+       $this->layout->title = $item->title;   	  
+       $this->layout->content = $content;
+       
+  }
 	
  }

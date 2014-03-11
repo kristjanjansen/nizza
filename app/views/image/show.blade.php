@@ -3,4 +3,4 @@
 @endforeach
 
 <br />
-<img src="{{ asset('/files/images/' . $item->field->filename) }}" width="100%"/>
+<img src="{{ asset('/files/images/' . $item->filename) }}" width="100%"/>

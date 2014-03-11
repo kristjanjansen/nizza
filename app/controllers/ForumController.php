@@ -1,131 +1,116 @@
 <?php
 
-class ForumController extends ContentController {
+class ForumController extends BaseController {
 
-  public function index() {
-          
-     $this->layout->title = 'Forum';   	  
-  	 $this->layout->content = $this
-  	    ->renderContentIndex('Forum', 'forum.item', null, array('user', 'destinations', 'topics'));
-  	$this->layout->content .= $this
-      ->renderBlockDestination('Forum');
-    $this->layout->content .= '<p />' . $this
-      ->renderBlockTopic();  
-     
-   }
+    public $layout = 'layout.master';
 
-   public function show($id) {
+    public function index() {
 
-   	$content = $this->renderContentShow($id, 'Forum'); 	
-    $this->layout->title = $content->title;   	  
-   	$this->layout->content = $content->content; 
-
-    }
-    
-
-    public function renderContentIndex($type, $view_item = null, $view_layout = null, $with = array()) {
-
-      $destination = Input::get('destination_id');
-      $topic = Input::get('topic_id');
+      $forum_type = Input::get('forum_type');
+      $destination_id = Input::get('destination_id');
+      $topic_id = Input::get('topic_id');
       $current_page = Paginator::getCurrentPage();
+
+      $this->layout->title = 'Forum';   	  
+    	$this->layout->content = Cache::
+          remember(
+              'forum-index-' . $forum_type . '-' . $destination_id . '-' . $topic_id . '-' . $current_page , 
+              1, 
+              function() use ($forum_type, $destination_id, $topic_id) {
+                  return $this->renderIndex($forum_type, $destination_id, $topic_id);
+              }); 
+     }
+     
+
+
+    public function renderIndex($forum_type = null, $destination_id = null, $topic_id = null) {
+
+        $items = array();
+
+        $forums = Forum::orderBy('created_at', 'desc')
+          ->with('user', 'destinations', 'topics', 'flags');
+
+      if ($forum_type) {
+            $forums = $forums->where('forum_type', '=', $forum_type);
+      }
+        
+    
+      if ($destination_id) {
+          $forums = $forums
+           ->join('destinationables', 'forum.id', '=', 'destinationables.destinationable_id')
+           ->where('destinationables.destinationable_type', '=', 'Forum')
+           ->where('destinationables.destination_id', '=', $destination_id);         
+      }
       
-       return Cache::
-        remember(
-          'content-index-forum-' . $destination . '-' . $topic . '-' . $current_page , 
-          1, 
-          function() 
-          use ($type, $view_item, $view_layout, $with, $destination, $topic) 
-        {
-          
-        $output = array();
 
-        $items = $type::
-          select('*', 'content.id')
-          ->with($with ? $with : array('user', 'destinations'))
-          ->orderBy('updated_at', 'desc');
+      if ($topic_id) {
+          $forums = $forums
+           ->join('topicables', 'forum.id', '=', 'topicables.topicable_id')
+           ->where('topicables.topicable_type', '=', 'Forum')
+           ->where('topicables.topic_id', '=', $topic_id);         
+      }
 
-        if (Input::has('destination_id')) $items = $items->filterDestination();
 
-        if (Input::has('topic_id')) $items = $items->filterTopic();      
-          
-        $items = $items->paginate(30);
+           
+/*        if ($destination_id) {
+            $forums = $forums->whereHas('destinations', function($q) use ($destination_id) {
+                $q->where('id', '=', $destination_id);
+            });
+        }
 
-        foreach($items as $item) {
-          $output[] = View::make($view_item ? $view_item : 'content.item')
-            ->with('item', $item)
-            ->with('type', $type);
+      if (Input::has('topic_id')) {
+          $forums = $forums->whereHas('topics', function($q) {
+              $q->where('id', '=', Input::get('topic_id'));
+          });
+      }
+        */
+             
+        
+      $forums = $forums->paginate(30);
+
+        foreach($forums as $forum) {
+          $items[] = View::make('forum.item')
+            ->with('item', $forum);
      	  }
 
-     	  return View::make($view_layout ? $view_layout : 'layout.table')
-          ->with('items', $output)
+     	  return View::make('layout.table')
+          ->with('items', $items)
           ->with('pager', 
             Paginator::
               make(array(), PHP_INT_MAX, 30)
-              ->appends('destination_id', $destination)
-              ->appends('topic_id', $topic)
+              ->appends('destination_id', $destination_id)
+              ->appends('topic_id', $topic_id)              
               ->links()
             )
           ->render();
-
-      });
-      
+               
     }
 
 
-  	public function renderBlockDestination($type) {
+     public function show($id) {
 
-      $topic = Input::get('topic_id');
-      
-      return Cache::
-        remember(
-          'block-destination-' . $type . '-' . $topic, 
-          1, 
-          function() 
-          use ($type, $topic)
-        {
-          
-  	  $dests = Destination::has($type)->orderBy('title')->get();
-      
-      $output = HTML::linkAction($type . 'Controller@index', 'All', array('topic_id' => Input::get('topic_id')));
+         $content = '';
+         $items = array();
 
-      foreach($dests as $dest) {
+   	    $item = Forum::findOrFail($id);
+         $item->load('user','comments','comments.user', 'destinations', 'topics', 'flags', 'comments.flags');
 
-  	    $output .= ' ' . HTML::linkAction($type . 'Controller@index', $dest->title, array('destination_id' => $dest->id, 'topic_id' => $topic));
+         $content = View::make('forum.show')
+             ->with('item', $item);
 
-  	  }
+         foreach($item->comments as $comment) {
+             $items[] = View::make('comment.item')
+                 ->with('comment', $comment);
+      	}
 
-  	  return $output;
-  	
-  	});
-  	
-  	}
-  	       
-    public function renderBlockTopic() {
+      	$content .= View::make('layout.table')
+             ->with('items', $items)
+             ->render();
 
-      $destination = Input::get('destination_id');
-      
-      return Cache::
-        remember(
-          'block-topic-Forum-' . $destination, 
-          1, 
-          function() 
-          use ($destination)
-        {
-          
-  	  $topics = Topic::has('Forum')->orderBy('title')->get();
+         $this->layout->title = $item->title;   	  
+        	$this->layout->content = $content;
 
-      $out = HTML::linkAction('ForumController@index', 'All', array('destination_id' => Input::get('destination_id')));
+    }
 
-      foreach($topics as $topic) {
-        
-  	    $out .= ' ' . HTML::linkAction('ForumController@index', $topic->title, array('destination_id' => $destination, 'topic_id' => $topic->id));
-  	      	  
-  	  }
-
-  	  return $out;
- 
-      });
-  	
-  	}
  
 }

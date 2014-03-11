@@ -13,10 +13,12 @@ class CreateBlogTable extends Migration {
     public function up()
     {
         Schema::create('blog', function(Blueprint $table) {
-
             $table->increments('id');	
-            $table->integer('content_id');
+            $table->integer('user_id')->index();	
+            $table->string('title');
+            $table->text('body');
             $table->string('url');
+            $table->timestamps();
       			
         });
     }

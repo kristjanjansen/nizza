@@ -47,11 +47,11 @@ class ConvertExpat extends ConvertBase {
 
     foreach($expats_old as $expat_old) {
 
-      if (!Expat::find($expat_old->nid)) {
+      if (!Forum::find($expat_old->nid)) {
 
-      $expat = new Expat;
+      $expat = new Forum;
       $expat->id = $expat_old->nid;
-      $expat->type = get_class($expat);      
+      $expat->forum_type = 'Expat';      
       $expat->user_id =  $expat_old->uid; 
       $expat->title = $expat_old->title;
       $expat->body = $expat_old->body;
@@ -62,10 +62,10 @@ class ConvertExpat extends ConvertBase {
       $expat->save();  
       
       $this->createUser($expat_old->uid);
-      $this->createComments($expat_old->nid, 'Expat');
-      $this->attachDestinations($expat_old->nid);                     
+      $this->createComments($expat_old->nid, 'Forum');
+      $this->attachDestinations($expat_old->nid, 'Forum');                     
     
-      $this->attachFlags($expat_old->nid, 'Expat');
+  //    $this->attachFlags($expat_old->nid, 'Expat');
     
      }
 

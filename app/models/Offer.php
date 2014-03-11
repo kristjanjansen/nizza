@@ -1,9 +1,20 @@
 <?php
 
-class Offer extends Content {
+class Offer extends Eloquent {
 
-  public function field() {
-      return $this->hasOne('OfferField', 'content_id');
-  }
+    protected $table = 'offer';
+
+    public function user() {
+        return $this->belongsTo('User');
+    }
+
+    public function comments() {
+        return $this->morphMany('Comment', 'commentable');
+    }
+    
+    public function destinations()
+    {
+        return $this->morphToMany('Destination', 'destinationable');
+    }
   
 }

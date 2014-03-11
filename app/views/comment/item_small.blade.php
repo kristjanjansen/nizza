@@ -3,4 +3,6 @@
 </td>
 <td>
 {{ HTML::linkAction('UserController@show', $comment->user->name, array($comment->user->id)) }} {{ $comment->body }} at {{ $comment->created_at}}
+<br />
+@include('flag.item')->with('flags', $item->flags)
 </td>

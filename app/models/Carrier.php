@@ -6,8 +6,4 @@ class Carrier extends Eloquent {
 
   public $timestamps = false;
   
-  public function forum() {
-      return $this->hasOne('Flight');
-  }
-
 }

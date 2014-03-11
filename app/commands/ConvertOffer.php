@@ -50,7 +50,6 @@ class ConvertOffer extends ConvertBase {
 
      $offer = new Offer;
      $offer->id = $offer_old->nid;
-     $offer->type = get_class($offer);
      $offer->user_id = $offer_old->uid;
      $offer->title = $offer_old->title;
      $offer->body = $offer_old->body;
@@ -110,15 +109,14 @@ class ConvertOffer extends ConvertBase {
      $offer->created_at = Carbon::createFromTimeStamp($offer_old->created);  
      $offer->updated_at = Carbon::createFromTimeStamp($offer_old->last_comment);  
 
+     $offer->url = $offer_old->field_link_url ? $offer_old->field_link_url : '';
+
      $offer->save();
+        
+     // @todo commercialUser
      
-     $fields = new OfferField;
-     $fields->content_id = $offer_old->nid;
-     $fields->url = $offer_old->field_link_url ? $offer_old->field_link_url : '';
-     $fields->save();
-     
-     $this->createUser($offer_old->uid); // type!
-     $this->createComments($offer_old->nid, 'Offer'); // ?
+     $this->createUser($offer_old->uid);
+     $this->createComments($offer_old->nid, 'Offer');
      $this->attachDestinations($offer_old->nid, 'Offer');                     
        
    }

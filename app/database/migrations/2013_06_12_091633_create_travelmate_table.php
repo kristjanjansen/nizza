@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateOfferTable extends Migration {
+class CreateTravelmateTable extends Migration {
 
     /**
      * Run the migrations.
@@ -12,13 +12,12 @@ class CreateOfferTable extends Migration {
      */
     public function up()
     {
-        Schema::create('offer', function(Blueprint $table) {
+        Schema::create('travelmate', function(Blueprint $table) {
             $table->increments('id');	
             $table->integer('user_id')->index();	
             $table->string('title');
             $table->text('body');
-            $table->string('url');
-            $table->timestamps();
+            $table->timestamps();			
         });
     }
 
@@ -29,7 +28,7 @@ class CreateOfferTable extends Migration {
      */
     public function down()
     {
-        Schema::drop('offer');
+        Schema::drop('travelmate');
     }
 
 }

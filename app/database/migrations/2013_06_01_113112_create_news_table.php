@@ -14,9 +14,12 @@ class CreateNewsTable extends Migration {
     {
         Schema::create('news', function(Blueprint $table) {
             $table->increments('id');	
-            $table->integer('content_id')->index();	
+            $table->integer('user_id')->index();	
+            $table->string('title');
+            $table->text('body');
             $table->string('url');
-            $table->string('image'); // @TODO Image model?      			
+            $table->string('image');
+            $table->timestamps();    			
         });
     }
 

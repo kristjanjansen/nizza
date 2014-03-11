@@ -51,20 +51,20 @@ class ConvertImage extends ConvertBase {
 
      $image = new Image;
      $image->id = $image_old->nid;
-     $image->type = get_class($image);
      $image->user_id = $image_old->uid;
      $image->title = $image_old->title;
      $image->body = $image_old->body;
      $image->created_at = Carbon::createFromTimeStamp($image_old->created);  
      $image->updated_at = Carbon::createFromTimeStamp($image_old->last_comment);  
-
-     $image->save();
      
+     // @todo What's this?
      // Type vid 20
      // 4367  
      // 646 
      
      $image_path = basename($image_old->filename);
+     
+     // @todo Guzzle
      
      if (substr($this->image_src, 0, 4) == 'http') {
        $ch = curl_init($this->image_src . $image_path);
@@ -86,15 +86,15 @@ class ConvertImage extends ConvertBase {
      }
      
      // @TODO curl_close($ch)
+
+     $image->filename = $image_old->filename; // @TODO basename()
      
-     $fields = new ImageField;
-     $fields->content_id = $image_old->nid;
-     $fields->filename = $image_old->filename; // @TODO basename()
-     $fields->save();
+     $image->save();
+     
      
      $this->createUser($image_old->uid);
      $this->createComments($image_old->nid, 'Image');
-     $this->attachDestinations($image_old->nid);                     
+     $this->attachDestinations($image_old->nid, 'Image');                     
        
    }
 

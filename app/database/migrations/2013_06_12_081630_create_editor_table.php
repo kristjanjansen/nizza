@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateBuysellTable extends Migration {
+class CreateEditorTable extends Migration {
 
     /**
      * Run the migrations.
@@ -12,8 +12,12 @@ class CreateBuysellTable extends Migration {
      */
     public function up()
     {
-        Schema::create('buysell', function(Blueprint $table) {
+        Schema::create('editor', function(Blueprint $table) {
             $table->increments('id');	
+            $table->integer('user_id')->index();	
+            $table->string('title');
+            $table->text('body');
+            $table->timestamps();	
         });
     }
 
@@ -24,7 +28,7 @@ class CreateBuysellTable extends Migration {
      */
     public function down()
     {
-        Schema::drop('buysell');
+        Schema::drop('editor');
     }
 
 }

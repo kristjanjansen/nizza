@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateContentTable extends Migration {
+class CreateForumTable extends Migration {
 
     /**
      * Run the migrations.
@@ -12,14 +12,13 @@ class CreateContentTable extends Migration {
      */
     public function up()
     {
-        Schema::create('content', function(Blueprint $table) {
+        Schema::create('forum', function(Blueprint $table) {
             $table->increments('id');	
             $table->integer('user_id')->index();	
             $table->string('title');
-            $table->string('type');
             $table->text('body');
-            $table->timestamps();
-      			
+            $table->string('forum_type')->index();
+            $table->timestamps();	
         });
     }
 
@@ -30,7 +29,7 @@ class CreateContentTable extends Migration {
      */
     public function down()
     {
-        Schema::drop('content');
+        Schema::drop('forum');
     }
 
 }

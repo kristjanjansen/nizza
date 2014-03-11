@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateTopicMapTable extends Migration {
+class CreateTopicablesTable extends Migration {
 
     /**
      * Run the migrations.
@@ -12,10 +12,10 @@ class CreateTopicMapTable extends Migration {
      */
     public function up()
     {
-        Schema::create('topic_map', function(Blueprint $table) {
-          $table->increments('id');	
-          $table->integer('content_id')->index();	
-          $table->integer('topic_id')->index();	
+        Schema::create('topicables', function(Blueprint $table) {
+            $table->integer('topic_id')->index();	
+            $table->integer('topicable_id')->index();	
+            $table->string('topicable_type');
         });
     }
 
@@ -26,7 +26,7 @@ class CreateTopicMapTable extends Migration {
      */
     public function down()
     {
-        Schema::drop('topic_map');
+        Schema::drop('topicables');
     }
 
 }

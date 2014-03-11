@@ -6,9 +6,13 @@
   <td>
 {{-- HTML::linkAction('UserController@show', $item->user->name, array($item->user->id)) --}} at {{ $item->created_at }}
 <br />
-@include('flag.item')->with('flags', $item->flags) 
-<br />
 {{ $item->body }}
+<br />
+@foreach($item->topics as $topic)
+{{ $topic->title }}, 
+@endforeach
+<br />
+@include('flag.item')->with('flags', $item->flags)
 </td>
 </tr>
 </table>

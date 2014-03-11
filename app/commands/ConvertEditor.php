@@ -51,7 +51,6 @@ class ConvertEditor extends ConvertBase {
 
       $editor = new Editor;
       $editor->id = $editor_old->nid;
-      $editor->type = get_class($editor);
       $editor->user_id = $editor_old->uid;
       $editor->title = $editor_old->title;
       $editor->body = $editor_old->body;
@@ -61,7 +60,7 @@ class ConvertEditor extends ConvertBase {
       
       $editor->save();  
       $this->createUser($editor_old->uid);
-      $this->createComments($editor_old->nid,'Editor');
+      $this->createComments($editor_old->nid, 'Editor');
     
      }
 

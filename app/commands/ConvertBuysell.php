@@ -47,11 +47,11 @@ class ConvertBuysell extends ConvertBase {
 
     foreach($buysells_old as $buysell_old) {
 
-      if (!Buysell::find($buysell_old->nid)) {
+      if (!Forum::find($buysell_old->nid)) {
 
-      $forum = new Buysell;
+      $forum = new Forum;
       $forum->id = $buysell_old->nid;
-      $forum->type = get_class($forum);     
+      $forum->forum_type = 'Buysell';
       $forum->user_id = $buysell_old->uid;
       $forum->title = $buysell_old->title;
       $forum->body = $buysell_old->body;
@@ -84,8 +84,8 @@ class ConvertBuysell extends ConvertBase {
       
       $forum->save();  
       $this->createUser($buysell_old->uid);
-      $this->createComments($buysell_old->nid, 'Buysell');
-      $this->attachDestinations($buysell_old->nid);                     
+      $this->createComments($buysell_old->nid, 'Forum');
+      $this->attachDestinations($buysell_old->nid, 'Forum');                     
     
      }
 

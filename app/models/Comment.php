@@ -6,19 +6,16 @@ class Comment extends Eloquent {
 
   public function commentable()
   {
-      return $this->belongsTo('Content');
+      return $this->morphTo();
   }
     
   public function user()
   {
       return $this->belongsTo('User');
   }
-
-  public function flags()
-  {
+  
+  public function flags() {
       return $this->morphMany('Flag', 'flaggable');
   }
-
-
 
 }
